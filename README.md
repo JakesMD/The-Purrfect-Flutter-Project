@@ -6,7 +6,7 @@
 ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ![bloc badge](https://tinyurl.com/bloc-library)
 
-Welcome to the Purrfekt Flutter Project! 🚀
+Welcome to the Purrfect Flutter Project! 🚀
 
 This community-driven initiative aims to create the "purrfect" example of a real-life Flutter app, ready to scale and handle millions of users.
 
