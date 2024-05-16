@@ -60,7 +60,8 @@ import 'localizations_en.g.dart';
 /// be consistent with the languages listed in the PAppL10n.supportedLocales
 /// property.
 abstract class PAppL10n {
-  PAppL10n(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  PAppL10n(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -80,7 +81,8 @@ abstract class PAppL10n {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -92,7 +94,6 @@ abstract class PAppL10n {
     Locale('de'),
     Locale('en')
   ];
-
 }
 
 class _PAppL10nDelegate extends LocalizationsDelegate<PAppL10n> {
@@ -104,25 +105,25 @@ class _PAppL10nDelegate extends LocalizationsDelegate<PAppL10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['de', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_PAppL10nDelegate old) => false;
 }
 
 PAppL10n lookupPAppL10n(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de': return PAppL10nDe();
-    case 'en': return PAppL10nEn();
+    case 'de':
+      return PAppL10nDe();
+    case 'en':
+      return PAppL10nEn();
   }
 
   throw FlutterError(
-    'PAppL10n.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'PAppL10n.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }
