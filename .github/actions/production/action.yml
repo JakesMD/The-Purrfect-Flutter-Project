@@ -1,0 +1,10 @@
+name: production
+description: production
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: 🏗️ Build Production App
+      shell: bash
+      run: melos build_production
