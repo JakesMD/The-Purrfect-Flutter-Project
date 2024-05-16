@@ -40,7 +40,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 
   Bloc.observer = const PAppBlocObserver();
 
-  bConfigureURLStrategy();
+  pConfigureURLStrategy();
 
   runApp(await builder());
 }

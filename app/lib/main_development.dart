@@ -5,5 +5,5 @@ import 'package:purrfect/bootstrap/bootstrap.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await bootstrap(() => const PurrfectApp(flavor: BAppFlavor.development));
+  await bootstrap(() => const PurrfectApp(flavor: PAppFlavor.development));
 }

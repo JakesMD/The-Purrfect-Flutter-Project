@@ -1,5 +1,5 @@
 /// The flavor of the app.
-enum BAppFlavor {
+enum PAppFlavor {
   /// Development flavor.
   development,
 

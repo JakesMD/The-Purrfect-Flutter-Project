@@ -1,0 +1,12 @@
+name: pcore
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ppub:
+
+dev_dependencies:
+  ppub_dev:

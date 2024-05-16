@@ -15,7 +15,7 @@ class PurrfectApp extends StatelessWidget {
   const PurrfectApp({required this.flavor, super.key});
 
   /// The flavor of the app.
-  final BAppFlavor flavor;
+  final PAppFlavor flavor;
 
   @override
   Widget build(BuildContext context) {
