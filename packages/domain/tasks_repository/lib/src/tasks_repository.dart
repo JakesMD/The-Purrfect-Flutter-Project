@@ -35,7 +35,7 @@ class PTasksRepository {
     required String instruction,
   }) async {
     final result = await databaseClient.insertTask(
-      PTasksTableCompanion(instruction: Value(instruction)),
+      PTasksTableCompanion.insert(instruction: instruction),
     );
 
     return result.fold(
@@ -53,7 +53,21 @@ class PTasksRepository {
     required int taskID,
     required String instruction,
   }) async {
-    return right(unit);
+    final result = await databaseClient.updateTask(
+      PTasksTableCompanion(
+        id: Value(taskID),
+        instruction: Value(instruction),
+      ),
+    );
+
+    return result.fold(
+      (exception) => left(
+        switch (exception) {
+          PTableUpdateException.unknown => PTaskUpdateException.unknown,
+        },
+      ),
+      right,
+    );
   }
 
   /// Deletes the task with the given [taskID].

@@ -47,7 +47,7 @@ void main() {
         await tester.pumpWidget(buildDialog());
 
         await tester.enterText(find.byType(TextFormField), 'hi');
-        await tester.tap(find.byKey(const Key('addTaskDialog_ok_button')));
+        await tester.tap(find.byKey(const Key('addTaskDialog_submit_button')));
         await tester.pumpAndSettle();
 
         verify(() => mockTaskCreationBloc.add(any())).called(1);
@@ -64,7 +64,7 @@ void main() {
       widgetsProcedure((tester) async {
         await tester.pumpWidget(buildDialog());
 
-        await tester.tap(find.byKey(const Key('addTaskDialog_ok_button')));
+        await tester.tap(find.byKey(const Key('addTaskDialog_submit_button')));
 
         verifyNever(() => mockTaskCreationBloc.add(any()));
       }),

@@ -43,4 +43,17 @@ class PDatabaseClient {
       return left(PTableInsertException.unknown);
     }
   }
+
+  /// Updates a task in the tasks table.
+  Future<Either<PTableUpdateException, Unit>> updateTask(
+    PTasksTableCompanion task,
+  ) async {
+    try {
+      await database.update(database.pTasksTable).replace(task);
+      return right(unit);
+    } catch (e, s) {
+      log(e.toString(), error: e, stackTrace: s, name: 'PDatabaseClient');
+      return left(PTableUpdateException.unknown);
+    }
+  }
 }

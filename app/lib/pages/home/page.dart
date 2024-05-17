@@ -24,7 +24,10 @@ class PHomePage extends StatelessWidget implements AutoRouteWrapper {
   void _onTaskPressed(BuildContext context, PTask task) {
     showDialog(
       context: context,
-      builder: (_) => PEditTaskDialog(task: task),
+      builder: (_) => PEditTaskDialog(
+        bloc: context.read<PTaskEditBloc>(),
+        task: task,
+      ),
     );
   }
 
@@ -62,6 +65,12 @@ class PHomePage extends StatelessWidget implements AutoRouteWrapper {
             ),
             BlocProvider(
               create: (context) => PTaskCreationBloc(
+                tasksRepository:
+                    RepositoryProvider.of<PTasksRepository>(context),
+              ),
+            ),
+            BlocProvider(
+              create: (context) => PTaskEditBloc(
                 tasksRepository:
                     RepositoryProvider.of<PTasksRepository>(context),
               ),
@@ -119,6 +128,10 @@ class PHomeView extends StatelessWidget {
           BlocListener<PTaskCreationBloc, PTaskCreationState>(
             listener: (context, state) => const PErrorSnackBar().show(context),
             listenWhen: (_, state) => state is PTaskCreationFailure,
+          ),
+          BlocListener<PTaskEditBloc, PTaskEditState>(
+            listener: (context, state) => const PErrorSnackBar().show(context),
+            listenWhen: (_, state) => state is PTaskEditFailure,
           ),
         ],
         child: Stack(
