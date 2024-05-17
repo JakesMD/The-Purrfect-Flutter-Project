@@ -1,3 +1,15 @@
 {
-    "@@locale": "de"
+    "@@locale": "de",
+    "stagingBanner_message": "Sie nutzen die Vorabversion.",
+    "stagingBanner_button": "Zur Endversion",
+    "snackBar_error_defaultMessage": "Hoppla! Etwas ist schiefgelaufen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "ok": "Ok",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "homePage_addTaskDialog_title": "Aufgabe hinzufügen",
+    "homePage_addTaskDialog_hint_instruction": "Anweisung",
+    "homePage_editTaskDialog_title": "Aufgabe bearbeiten",
+    "homePage_editTaskDialog_hint_instruction": "Anweisung"
 }
