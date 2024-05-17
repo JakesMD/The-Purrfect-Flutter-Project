@@ -21,9 +21,14 @@ class MockPTasksStreamBloc
     extends MockBloc<PTasksStreamEvent, PTasksStreamState>
     implements PTasksStreamBloc {}
 
+class MockPTaskCreationBloc
+    extends MockBloc<PTaskCreationEvent, PTaskCreationState>
+    implements PTaskCreationBloc {}
+
 void main() {
   group('PHomePage tests', () {
     late MockPTasksStreamBloc mockTasksStreamBloc;
+    late MockPTaskCreationBloc mockTaskCreationBloc;
 
     const fakeTask = PTask(id: 4, instruction: 'asdsa', isCompleted: false);
 
@@ -33,6 +38,9 @@ void main() {
           BlocProvider<PTasksStreamBloc>(
             create: (context) => mockTasksStreamBloc,
           ),
+          BlocProvider<PTaskCreationBloc>(
+            create: (context) => mockTaskCreationBloc,
+          ),
         ],
         child: const PHomePage(),
       );
@@ -40,6 +48,10 @@ void main() {
 
     setUp(() {
       mockTasksStreamBloc = MockPTasksStreamBloc();
+      mockTaskCreationBloc = MockPTaskCreationBloc();
+
+      when(() => mockTasksStreamBloc.state).thenReturn(PTasksStreamInitial());
+      when(() => mockTaskCreationBloc.state).thenReturn(PTaskCreationInitial());
     });
 
     testWidgets(
@@ -49,13 +61,71 @@ void main() {
         Then: 'Shows loading indicator',
       ),
       widgetsProcedure((tester) async {
-        when(() => mockTasksStreamBloc.state).thenReturn(
-          PTasksStreamInitial(),
-        );
+        when(() => mockTasksStreamBloc.state).thenReturn(PTasksStreamInitial());
 
         await tester.pumpWidget(buildHomePage());
 
         expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'Task creation is in progress',
+        Then: 'Shows loading indicator',
+      ),
+      widgetsProcedure((tester) async {
+        when(() => mockTaskCreationBloc.state)
+            .thenReturn(PTaskCreationInProgress());
+
+        await tester.pumpWidget(buildHomePage());
+
+        expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'When task stream fails',
+        Then: 'Snackbar is shown',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTasksStreamBloc,
+          Stream.fromIterable([
+            PTasksStreamFailure(exception: PTasksStreamException.unknown),
+          ]),
+          initialState: PTasksStreamInitial(),
+        );
+
+        await tester.pumpWidget(buildHomePage());
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'When task creation fails',
+        Then: 'Snackbar is shown',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTaskCreationBloc,
+          Stream.fromIterable([
+            PTaskCreationFailure(exception: PTaskCreationException.unknown),
+          ]),
+          initialState: PTaskCreationInitial(),
+        );
+
+        await tester.pumpWidget(buildHomePage());
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsOneWidget);
       }),
     );
 
@@ -83,37 +153,14 @@ void main() {
         Then: 'Opens edit task popup',
       ),
       widgetsProcedure((tester) async {
-        when(() => mockTasksStreamBloc.state).thenReturn(
-          PTasksStreamSuccess(tasks: [fakeTask]),
-        );
+        when(() => mockTasksStreamBloc.state)
+            .thenReturn(PTasksStreamSuccess(tasks: [fakeTask]));
 
         await tester.pumpWidget(buildHomePage());
         await tester.tap(find.byType(PTaskItem));
         await tester.pump();
 
         expect(find.byType(PEditTaskDialog), findsOneWidget);
-      }),
-    );
-
-    testWidgets(
-      requirement(
-        Given: 'Home page',
-        When: 'When task stream fails',
-        Then: 'Snackbar is shown',
-      ),
-      widgetsProcedure((tester) async {
-        whenListen(
-          mockTasksStreamBloc,
-          Stream.fromIterable([
-            PTasksStreamFailure(exception: PTasksStreamException.unknown),
-          ]),
-          initialState: PTasksStreamInitial(),
-        );
-
-        await tester.pumpWidget(buildHomePage());
-        await tester.pump();
-
-        expect(find.byType(SnackBar), findsOneWidget);
       }),
     );
   });

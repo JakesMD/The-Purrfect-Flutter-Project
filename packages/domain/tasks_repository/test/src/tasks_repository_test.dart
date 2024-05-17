@@ -26,6 +26,10 @@ void main() {
       isCompleted: fakeTask.isCompleted,
     );
 
+    setUpAll(() {
+      registerFallbackValue(const PTasksTableCompanion());
+    });
+
     setUp(() {
       mockDatabaseClient = MockPDatabaseClient();
       repo = PTasksRepository(databaseClient: mockDatabaseClient);
@@ -60,6 +64,44 @@ void main() {
           final result = repo.tasksStream();
 
           expect(result, emits(left(PTasksStreamException.unknown)));
+        }),
+      );
+    });
+
+    group('createTask', () {
+      test(
+        requirement(
+          When: 'inserting a task into the database succeeds',
+          Then: 'returns the created task',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.insertTask(any())).thenAnswer(
+            (_) => Future.value(right(fakeTaskTableData)),
+          );
+
+          final result = await repo.createTask(
+            instruction: fakeTask.instruction,
+          );
+
+          expect(result.pAsRight(), equals(fakeTask));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'inserting a task into the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.insertTask(any())).thenAnswer(
+            (_) => Future.value(left(PTableInsertException.unknown)),
+          );
+
+          final result = await repo.createTask(
+            instruction: fakeTask.instruction,
+          );
+
+          expect(result, left(PTaskCreationException.unknown));
         }),
       );
     });

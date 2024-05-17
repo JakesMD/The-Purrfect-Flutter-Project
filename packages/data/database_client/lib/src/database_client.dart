@@ -29,4 +29,18 @@ class PDatabaseClient {
       yield left(PTableStreamException.unknown);
     }
   }
+
+  /// Inserts a new task into the tasks table.
+  Future<Either<PTableInsertException, PTasksTableData>> insertTask(
+    PTasksTableCompanion task,
+  ) async {
+    try {
+      final newTask =
+          await database.into(database.pTasksTable).insertReturning(task);
+      return right(newTask);
+    } catch (e, s) {
+      log(e.toString(), error: e, stackTrace: s, name: 'PDatabaseClient');
+      return left(PTableInsertException.unknown);
+    }
+  }
 }

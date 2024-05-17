@@ -34,8 +34,17 @@ class PTasksRepository {
   Future<Either<PTaskCreationException, PTask>> createTask({
     required String instruction,
   }) async {
-    return right(
-      PTask(id: 0, instruction: instruction, isCompleted: false),
+    final result = await databaseClient.insertTask(
+      PTasksTableCompanion(instruction: Value(instruction)),
+    );
+
+    return result.fold(
+      (exception) => left(
+        switch (exception) {
+          PTableInsertException.unknown => PTaskCreationException.unknown,
+        },
+      ),
+      (row) => right(PTask.fromTableRow(row)),
     );
   }
 
