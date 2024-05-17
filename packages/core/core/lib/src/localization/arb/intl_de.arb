@@ -1,3 +1,4 @@
 {
-    "@@locale": "de"
+    "@@locale": "de",
+    "inputError_text_empty": "Bitte geben Sie einen Text ein."
 }
