@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pdatabase_client/pdatabase_client.dart';
 import 'package:ppub/auto_route.dart';
+import 'package:ppub/flutter_bloc.dart';
 import 'package:ptasks_repository/ptasks_repository.dart';
+import 'package:purrfect/pages/home/bloc/_bloc.dart';
 import 'package:purrfect/pages/home/dialogs/_dialogs.dart';
 import 'package:purrfect/pages/home/widgets/_widgets.dart';
+import 'package:purrfect/shared/widgets/_widgets.dart';
 
 /// {@template PHomePage}
 ///
@@ -13,7 +17,7 @@ import 'package:purrfect/pages/home/widgets/_widgets.dart';
 ///
 /// {@endtemplate}
 @RoutePage()
-class PHomePage extends StatelessWidget {
+class PHomePage extends StatelessWidget implements AutoRouteWrapper {
   /// {@macro PHomePage}
   const PHomePage({super.key});
 
@@ -30,6 +34,37 @@ class PHomePage extends StatelessWidget {
       builder: (context) => PAddTaskDialog(),
     );
   }
+
+  // coverage:ignore-start
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return PMultiClientProvider(
+      providers: [
+        PClientProvider(
+          create: (context) => PDatabaseClient(
+            database: PDatabase(),
+          ),
+        ),
+      ],
+      child: RepositoryProvider(
+        create: (context) => PTasksRepository(
+          databaseClient: context.read<PDatabaseClient>(),
+        ),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => PTasksStreamBloc(
+                tasksRepository:
+                    RepositoryProvider.of<PTasksRepository>(context),
+              ),
+            ),
+          ],
+          child: this,
+        ),
+      ),
+    );
+  }
+  // coverage:ignore-end
 
   @override
   Widget build(BuildContext context) {
@@ -66,17 +101,21 @@ class PHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Purrfect'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Positioned.fill(child: PConfetti()),
-          PTasksList(onTaskPressed: onTaskPressed),
+      appBar: const PHomeAppBar(),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<PTasksStreamBloc, PTasksStreamState>(
+            listener: (context, state) => const PErrorSnackBar().show(context),
+            listenWhen: (_, state) => state is PTasksStreamFailure,
+          ),
         ],
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Positioned.fill(child: PConfetti()),
+            PTasksList(onTaskPressed: onTaskPressed),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: onAddTaskPressed,

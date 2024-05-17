@@ -12,11 +12,10 @@ import 'package:ptasks_repository/ptasks_repository.dart';
 /// {@endtemplate}
 class PTaskItem extends StatelessWidget {
   /// {@macro PTaskItem}
-  const PTaskItem({
+  PTaskItem({
     required this.task,
     required this.onPressed,
-    super.key,
-  });
+  }) : super(key: ValueKey(task.id));
 
   /// The task to display.
   final PTask task;

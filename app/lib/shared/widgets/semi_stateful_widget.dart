@@ -22,7 +22,7 @@ class PSemiStatefulWidget extends StatefulWidget {
 
   /// Builds the widget.
   @mustBeOverridden
-  Widget build(BuildContext context) => const Placeholder();
+  Widget build(BuildContext context) => throw UnimplementedError();
 
   @override
   State<PSemiStatefulWidget> createState() => _PSemiStatefulWidgetState();
