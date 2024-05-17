@@ -27,13 +27,16 @@ class PHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: PAppBarLoadingIndicator(
         listeners: [
           PLoadingListener<PTasksStreamBloc, PTasksStreamState>(
-            isLoading: (state) => state is PTasksStreamInitial,
+            isLoading: (state) => state is PTasksStreamLoading,
           ),
           PLoadingListener<PTaskCreationBloc, PTaskCreationState>(
-            isLoading: (state) => state is PTaskCreationInitial,
+            isLoading: (state) => state is PTaskCreationInProgress,
           ),
           PLoadingListener<PTaskEditBloc, PTaskEditState>(
-            isLoading: (state) => state is PTaskEditInitial,
+            isLoading: (state) => state is PTaskEditInProgress,
+          ),
+          PLoadingListener<PTaskDeletionBloc, PTaskDeletionState>(
+            isLoading: (state) => state is PTaskDeletionInProgress,
           ),
         ],
       ),

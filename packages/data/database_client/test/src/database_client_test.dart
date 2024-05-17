@@ -19,6 +19,9 @@ class MockInsertStatement extends Mock
 class MockUpdateStatement extends Mock
     implements UpdateStatement<$PTasksTableTable, PTasksTableData> {}
 
+class MockDeleteStatement extends Mock
+    implements DeleteStatement<$PTasksTableTable, PTasksTableData> {}
+
 void main() {
   group('PDatabaseClient Tests', () {
     late PDatabaseClient client;
@@ -164,6 +167,45 @@ void main() {
           final result = await client.updateTask(fakeTasksTableCompanion);
 
           expect(result, left(PTableUpdateException.unknown));
+        }),
+      );
+    });
+
+    group('deleteTask', () {
+      late MockDeleteStatement mockDeleteStatement;
+
+      setUp(() {
+        mockDeleteStatement = MockDeleteStatement();
+        when(() => mockPDatabase.delete(any<$PTasksTableTable>()))
+            .thenReturn(mockDeleteStatement);
+      });
+      test(
+        requirement(
+          When: 'deleting a task in the database succeeds',
+          Then: 'returns [unit]',
+        ),
+        procedure(() async {
+          when(() => mockDeleteStatement.delete(any()))
+              .thenAnswer((_) async => 1);
+
+          final result = await client.deleteTask(fakeTasksTableCompanion);
+
+          expect(result, right(unit));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'deleting a task in the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockDeleteStatement.delete(any()))
+              .thenThrow(Exception('Unknown exception'));
+
+          final result = await client.deleteTask(fakeTasksTableCompanion);
+
+          expect(result, left(PTableDeletionException.unknown));
         }),
       );
     });

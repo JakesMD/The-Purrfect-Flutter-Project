@@ -75,6 +75,12 @@ class PHomePage extends StatelessWidget implements AutoRouteWrapper {
                     RepositoryProvider.of<PTasksRepository>(context),
               ),
             ),
+            BlocProvider(
+              create: (context) => PTaskDeletionBloc(
+                tasksRepository:
+                    RepositoryProvider.of<PTasksRepository>(context),
+              ),
+            ),
           ],
           child: this,
         ),
@@ -132,6 +138,10 @@ class PHomeView extends StatelessWidget {
           BlocListener<PTaskEditBloc, PTaskEditState>(
             listener: (context, state) => const PErrorSnackBar().show(context),
             listenWhen: (_, state) => state is PTaskEditFailure,
+          ),
+          BlocListener<PTaskDeletionBloc, PTaskDeletionState>(
+            listener: (context, state) => const PErrorSnackBar().show(context),
+            listenWhen: (_, state) => state is PTaskDeletionFailure,
           ),
         ],
         child: Stack(

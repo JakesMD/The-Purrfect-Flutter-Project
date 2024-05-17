@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ppub/dartz.dart';
+import 'package:ppub_dev/bloc_test.dart';
 import 'package:ppub_dev/flutter_test.dart';
 import 'package:ppub_dev/mocktail.dart';
 import 'package:ppub_dev/test_beautifier.dart';
@@ -36,34 +37,36 @@ void main() {
     test(
       requirement(
         When: 'first initialized',
-        Then: 'state is [initial]',
+        Then: 'state is [loading]',
       ),
-      procedure(() => expect(bloc.state, PTasksStreamInitial())),
+      procedure(() async {
+        await Future.delayed(Duration.zero);
+        expect(bloc.state, PTasksStreamLoading());
+      }),
     );
 
-    test(
+    blocTest(
       requirement(
         When: 'tasks are streamed',
         Then: 'state is [success]',
       ),
-      procedure(() {
-        controller.add(right([fakeTask]));
-        expectLater(bloc.stream, emits(PTasksStreamSuccess(tasks: [fakeTask])));
-      }),
+      build: () => bloc,
+      act: (bloc) => controller.add(right([fakeTask])),
+      expect: () => [
+        PTasksStreamSuccess(tasks: [fakeTask]),
+      ],
     );
 
-    test(
+    blocTest(
       requirement(
         When: 'tasks stream returns exception',
         Then: 'state is [failure]',
       ),
-      procedure(() {
-        controller.add(left(PTasksStreamException.unknown));
-        expectLater(
-          bloc.stream,
-          emits(PTasksStreamFailure(exception: PTasksStreamException.unknown)),
-        );
-      }),
+      build: () => bloc,
+      act: (bloc) => controller.add(left(PTasksStreamException.unknown)),
+      expect: () => [
+        PTasksStreamFailure(exception: PTasksStreamException.unknown),
+      ],
     );
 
     test(

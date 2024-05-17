@@ -28,3 +28,13 @@ We encourage you to participate in discussions! This is a great place to:
 - Share ideas for new features.
 - Discuss best practices.
 - Get help with issues you're facing.
+
+## Getting Started
+1. Clone the repo.
+2. Run
+
+    ```
+    flutter pub global activate melos
+    melos setup
+    ```
+3. You're all set!

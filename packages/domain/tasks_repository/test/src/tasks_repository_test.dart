@@ -108,7 +108,7 @@ void main() {
     group('editTask', () {
       test(
         requirement(
-          When: 'updating a task into the database succeeds',
+          When: 'updating a task in the database succeeds',
           Then: 'returns [unit]',
         ),
         procedure(() async {
@@ -140,6 +140,39 @@ void main() {
           );
 
           expect(result, left(PTaskUpdateException.unknown));
+        }),
+      );
+    });
+
+    group('deleteTask', () {
+      test(
+        requirement(
+          When: 'deleting a task in the database succeeds',
+          Then: 'returns [unit]',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.deleteTask(any()))
+              .thenAnswer((_) => Future.value(right(unit)));
+
+          final result = await repo.deleteTask(taskID: fakeTask.id);
+
+          expect(result, right(unit));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'deleting a task in the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.deleteTask(any())).thenAnswer(
+            (_) => Future.value(left(PTableDeletionException.unknown)),
+          );
+
+          final result = await repo.deleteTask(taskID: fakeTask.id);
+
+          expect(result, left(PTaskDeletionException.unknown));
         }),
       );
     });

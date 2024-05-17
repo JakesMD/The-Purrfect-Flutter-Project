@@ -24,10 +24,8 @@ class PTasksList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PTasksStreamBloc, PTasksStreamState>(
       builder: (context, state) => switch (state) {
-        PTasksStreamInitial() => const Align(
-            alignment: Alignment.topCenter,
-            child: LinearProgressIndicator(),
-          ),
+        PTasksStreamLoading() => const SizedBox(),
+        PTasksStreamInitial() => const SizedBox(),
         PTasksStreamFailure() => const SizedBox(),
         PTasksStreamSuccess(tasks: final tasks) => ListView.builder(
             itemCount: tasks.length,

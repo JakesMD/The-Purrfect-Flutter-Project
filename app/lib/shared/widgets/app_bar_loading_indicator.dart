@@ -42,7 +42,10 @@ class _PAppBarLoadingIndicatorState extends State<PAppBarLoadingIndicator> {
       ],
       child: Visibility(
         visible: isLoading,
-        child: const LinearProgressIndicator(minHeight: 4),
+        child: const LinearProgressIndicator(
+          key: Key('app_bar_loading_indicator'),
+          minHeight: 4,
+        ),
       ),
     );
   }
