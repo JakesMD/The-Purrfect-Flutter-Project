@@ -5,6 +5,7 @@ environment:
 
 dependencies:
   pcore:
+  pdatabase_client:
   ppub:
 
 dev_dependencies:

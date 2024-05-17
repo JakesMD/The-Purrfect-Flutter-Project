@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ppub/flutter_bloc.dart';
 import 'package:ptasks_repository/ptasks_repository.dart';
+import 'package:purrfect/pages/home/bloc/tasks_stream/bloc.dart';
 import 'package:purrfect/pages/home/widgets/_widgets.dart';
 
 /// {@template PTasksList}
@@ -20,17 +22,19 @@ class PTasksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return PTaskItem(
-          task: PTask(
-            id: BigInt.from(index),
-            instruction: 'Task $index',
-            isCompleted: false,
+    return BlocBuilder<PTasksStreamBloc, PTasksStreamState>(
+      builder: (context, state) => switch (state) {
+        PTasksStreamInitial() => const Align(
+            alignment: Alignment.topCenter,
+            child: LinearProgressIndicator(),
           ),
-          onPressed: onTaskPressed,
-        );
+        PTasksStreamFailure() => const SizedBox(),
+        PTasksStreamSuccess(tasks: final tasks) => ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              return PTaskItem(task: tasks[index], onPressed: onTaskPressed);
+            },
+          ),
       },
     );
   }

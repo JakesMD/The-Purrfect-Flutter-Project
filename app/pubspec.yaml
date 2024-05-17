@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   pcore:
+  pdatabase_client:
   ppub:
   ptasks_repository:
 

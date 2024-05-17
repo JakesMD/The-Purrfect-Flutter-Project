@@ -3,6 +3,8 @@ import 'package:ppub_dev/flutter_test.dart';
 import 'package:ppub_dev/test_beautifier.dart';
 import 'package:purrfect/shared/widgets/_widgets.dart';
 
+class FakeBuildContext extends Fake implements BuildContext {}
+
 // ignore: must_be_immutable
 class TestWidget extends PSemiStatefulWidget {
   TestWidget({super.key});
@@ -72,11 +74,23 @@ void main() {
         final testWidget = TestWidget();
 
         await tester.pumpWidget(testWidget);
-        await tester.pumpAndSettle();
         await tester.pumpWidget(Container());
-        await tester.pumpAndSettle();
 
         expect(testWidget.onDisposeCalled, true);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'semi stateful widget without build method',
+        When: 'build',
+        Then: 'throws UnimplementedError',
+      ),
+      widgetsProcedure((tester) async {
+        expect(
+          () => const PSemiStatefulWidget().build(FakeBuildContext()),
+          throwsUnimplementedError,
+        );
       }),
     );
   });
