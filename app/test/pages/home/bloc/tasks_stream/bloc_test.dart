@@ -16,7 +16,7 @@ void main() {
     late StreamController<Either<PTasksStreamException, List<PTask>>>
         controller;
 
-    final fakeTask = PTask(id: 3, instruction: 'asdjkl', isCompleted: false);
+    const fakeTask = PTask(id: 3, instruction: 'asdjkl', isCompleted: false);
 
     setUp(() {
       mockPTasksRepository = MockPTasksRepository();

@@ -25,11 +25,7 @@ void main() {
   group('PHomePage tests', () {
     late MockPTasksStreamBloc mockTasksStreamBloc;
 
-    final fakeTask = PTask(
-      id: 4,
-      instruction: 'asdsa',
-      isCompleted: false,
-    );
+    const fakeTask = PTask(id: 4, instruction: 'asdsa', isCompleted: false);
 
     Widget buildHomePage() {
       return MockPApp(
