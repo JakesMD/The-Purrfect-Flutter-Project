@@ -13,12 +13,7 @@ void main() {
     late MockTasksRepository repo;
     late PTaskEditBloc bloc;
 
-    const fakeTask = PTask(id: 3, instruction: 'sdasd', isCompleted: false);
-
-    final fakeEditTrigger = PTaskEditTriggered(
-      taskID: fakeTask.id,
-      instruction: fakeTask.instruction,
-    );
+    final fakeEditTrigger = PTaskEditTriggered(taskID: 3, instruction: 'adj');
 
     Future<Either<PTaskUpdateException, Unit>> mockEditTask() {
       return repo.editTask(

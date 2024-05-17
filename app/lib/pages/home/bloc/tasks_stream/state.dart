@@ -9,6 +9,9 @@ sealed class PTasksStreamState with EquatableMixin {
 /// Indicates the tasks stream has not yet been loaded.
 final class PTasksStreamInitial extends PTasksStreamState {}
 
+/// Indicates the tasks stream is loading.
+final class PTasksStreamLoading extends PTasksStreamState {}
+
 /// {@template PTasksStreamSuccess}
 ///
 /// Indicates the tasks have been successfully streamed. Contains the tasks.

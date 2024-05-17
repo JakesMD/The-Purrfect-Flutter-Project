@@ -56,4 +56,17 @@ class PDatabaseClient {
       return left(PTableUpdateException.unknown);
     }
   }
+
+  /// Updates a task in the tasks table.
+  Future<Either<PTableDeletionException, Unit>> deleteTask(
+    PTasksTableCompanion task,
+  ) async {
+    try {
+      await database.delete(database.pTasksTable).delete(task);
+      return right(unit);
+    } catch (e, s) {
+      log(e.toString(), error: e, stackTrace: s, name: 'PDatabaseClient');
+      return left(PTableDeletionException.unknown);
+    }
+  }
 }

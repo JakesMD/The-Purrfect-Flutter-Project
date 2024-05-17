@@ -74,6 +74,17 @@ class PTasksRepository {
   Future<Either<PTaskDeletionException, Unit>> deleteTask({
     required int taskID,
   }) async {
-    return right(unit);
+    final result = await databaseClient.deleteTask(
+      PTasksTableCompanion(id: Value(taskID)),
+    );
+
+    return result.fold(
+      (exception) => left(
+        switch (exception) {
+          PTableDeletionException.unknown => PTaskDeletionException.unknown,
+        },
+      ),
+      right,
+    );
   }
 }

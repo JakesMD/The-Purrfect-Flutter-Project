@@ -20,7 +20,8 @@ class PTasksStreamBloc extends Bloc<PTasksStreamEvent, PTasksStreamState> {
     required this.tasksRepository,
   }) : super(PTasksStreamInitial()) {
     on<_PTasksStreamUpdated>(_onTasksStreamUpdate, transformer: droppable());
-    _subscribeToTasksStream();
+    on<_PTasksStreamStarted>(_onStarted);
+    add(_PTasksStreamStarted());
   }
 
   /// The repository for interacting with tasks.
@@ -29,7 +30,12 @@ class PTasksStreamBloc extends Bloc<PTasksStreamEvent, PTasksStreamState> {
   late final StreamSubscription<Either<PTasksStreamException, List<PTask>>>
       _tasksSubscription;
 
-  void _subscribeToTasksStream() {
+  void _onStarted(
+    _PTasksStreamStarted event,
+    Emitter<PTasksStreamState> emit,
+  ) {
+    emit(PTasksStreamLoading());
+
     _tasksSubscription = tasksRepository.tasksStream().listen((result) {
       add(_PTasksStreamUpdated(result: result));
     });
