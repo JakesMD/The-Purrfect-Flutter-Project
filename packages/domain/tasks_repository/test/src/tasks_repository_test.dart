@@ -75,9 +75,8 @@ void main() {
           Then: 'returns the created task',
         ),
         procedure(() async {
-          when(() => mockDatabaseClient.insertTask(any())).thenAnswer(
-            (_) => Future.value(right(fakeTaskTableData)),
-          );
+          when(() => mockDatabaseClient.insertTask(any()))
+              .thenAnswer((_) => Future.value(right(fakeTaskTableData)));
 
           final result = await repo.createTask(
             instruction: fakeTask.instruction,
@@ -102,6 +101,45 @@ void main() {
           );
 
           expect(result, left(PTaskCreationException.unknown));
+        }),
+      );
+    });
+
+    group('editTask', () {
+      test(
+        requirement(
+          When: 'updating a task into the database succeeds',
+          Then: 'returns [unit]',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.updateTask(any()))
+              .thenAnswer((_) => Future.value(right(unit)));
+
+          final result = await repo.editTask(
+            taskID: fakeTask.id,
+            instruction: fakeTask.instruction,
+          );
+
+          expect(result, right(unit));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'updating a task in the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.updateTask(any())).thenAnswer(
+            (_) => Future.value(left(PTableUpdateException.unknown)),
+          );
+
+          final result = await repo.editTask(
+            taskID: fakeTask.id,
+            instruction: fakeTask.instruction,
+          );
+
+          expect(result, left(PTaskUpdateException.unknown));
         }),
       );
     });

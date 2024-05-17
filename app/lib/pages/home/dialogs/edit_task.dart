@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pcore/pcore.dart';
 import 'package:ptasks_repository/ptasks_repository.dart';
 import 'package:purrfect/localization/l10n.dart';
+import 'package:purrfect/pages/home/bloc/_bloc.dart';
 
 /// {@template PEditTaskDialog}
 ///
@@ -15,23 +16,28 @@ class PEditTaskDialog extends StatelessWidget {
   /// {@macro PEditTaskDialog}
   PEditTaskDialog({
     required this.task,
-    //required this.bloc,
-
+    required this.bloc,
     super.key,
   });
 
   /// The task to edit.
   final PTask task;
 
-  /// The bloc that handles update the task.
-  /// Used to dispatch the task update event.
-  //final PTaskUpdateBloc bloc;
+  /// The bloc that handles editing the task.
+  /// Used to dispatch the task edit event.
+  final PTaskEditBloc bloc;
 
   final _formKey = GlobalKey<FormFieldState<String>>();
   final _input = PTextInput();
 
   void _onSubmitted(BuildContext context) {
     if (_formKey.currentState!.validate()) {
+      bloc.add(
+        PTaskEditTriggered(
+          taskID: task.id,
+          instruction: _input.value(context),
+        ),
+      );
       Navigator.pop(context);
     }
   }
@@ -63,10 +69,12 @@ class PEditTaskDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
+          key: const Key('editTaskDialog_cancel_button'),
           onPressed: () => Navigator.pop(context),
           child: Text(context.pAppL10n.cancel),
         ),
         TextButton(
+          key: const Key('editTaskDialog_submit_button'),
           onPressed: () => _onSubmitted(context),
           child: Text(context.pAppL10n.ok),
         ),

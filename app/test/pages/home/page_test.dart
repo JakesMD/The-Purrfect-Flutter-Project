@@ -25,10 +25,14 @@ class MockPTaskCreationBloc
     extends MockBloc<PTaskCreationEvent, PTaskCreationState>
     implements PTaskCreationBloc {}
 
+class MockPTaskEditBloc extends MockBloc<PTaskEditEvent, PTaskEditState>
+    implements PTaskEditBloc {}
+
 void main() {
   group('PHomePage tests', () {
     late MockPTasksStreamBloc mockTasksStreamBloc;
     late MockPTaskCreationBloc mockTaskCreationBloc;
+    late MockPTaskEditBloc mockTaskEditBloc;
 
     const fakeTask = PTask(id: 4, instruction: 'asdsa', isCompleted: false);
 
@@ -41,6 +45,9 @@ void main() {
           BlocProvider<PTaskCreationBloc>(
             create: (context) => mockTaskCreationBloc,
           ),
+          BlocProvider<PTaskEditBloc>(
+            create: (context) => mockTaskEditBloc,
+          ),
         ],
         child: const PHomePage(),
       );
@@ -49,9 +56,11 @@ void main() {
     setUp(() {
       mockTasksStreamBloc = MockPTasksStreamBloc();
       mockTaskCreationBloc = MockPTaskCreationBloc();
+      mockTaskEditBloc = MockPTaskEditBloc();
 
       when(() => mockTasksStreamBloc.state).thenReturn(PTasksStreamInitial());
       when(() => mockTaskCreationBloc.state).thenReturn(PTaskCreationInitial());
+      when(() => mockTaskEditBloc.state).thenReturn(PTaskEditInitial());
     });
 
     testWidgets(
@@ -78,6 +87,20 @@ void main() {
       widgetsProcedure((tester) async {
         when(() => mockTaskCreationBloc.state)
             .thenReturn(PTaskCreationInProgress());
+
+        await tester.pumpWidget(buildHomePage());
+
+        expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      }),
+    );
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'Task edit is in progress',
+        Then: 'Shows loading indicator',
+      ),
+      widgetsProcedure((tester) async {
+        when(() => mockTaskEditBloc.state).thenReturn(PTaskEditInProgress());
 
         await tester.pumpWidget(buildHomePage());
 
@@ -120,6 +143,28 @@ void main() {
             PTaskCreationFailure(exception: PTaskCreationException.unknown),
           ]),
           initialState: PTaskCreationInitial(),
+        );
+
+        await tester.pumpWidget(buildHomePage());
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'When task edit fails',
+        Then: 'Snackbar is shown',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTaskEditBloc,
+          Stream.fromIterable([
+            PTaskEditFailure(exception: PTaskUpdateException.unknown),
+          ]),
+          initialState: PTaskEditInitial(),
         );
 
         await tester.pumpWidget(buildHomePage());

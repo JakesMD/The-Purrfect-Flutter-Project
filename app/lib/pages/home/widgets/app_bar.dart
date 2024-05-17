@@ -32,6 +32,9 @@ class PHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           PLoadingListener<PTaskCreationBloc, PTaskCreationState>(
             isLoading: (state) => state is PTaskCreationInitial,
           ),
+          PLoadingListener<PTaskEditBloc, PTaskEditState>(
+            isLoading: (state) => state is PTaskEditInitial,
+          ),
         ],
       ),
     );

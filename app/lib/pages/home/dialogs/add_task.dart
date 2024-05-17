@@ -63,7 +63,7 @@ class PAddTaskDialog extends StatelessWidget {
           child: Text(context.pAppL10n.cancel),
         ),
         TextButton(
-          key: const Key('addTaskDialog_ok_button'),
+          key: const Key('addTaskDialog_submit_button'),
           onPressed: () => _onSubmitted(context),
           child: Text(context.pAppL10n.ok),
         ),

@@ -16,12 +16,13 @@ class MockSimpleSelectStatement extends Mock
 class MockInsertStatement extends Mock
     implements InsertStatement<$PTasksTableTable, PTasksTableData> {}
 
+class MockUpdateStatement extends Mock
+    implements UpdateStatement<$PTasksTableTable, PTasksTableData> {}
+
 void main() {
   group('PDatabaseClient Tests', () {
     late PDatabaseClient client;
     late MockPDatabase mockPDatabase;
-    late MockSimpleSelectStatement mockSimpleSelectStatement;
-    late MockInsertStatement mockInsertStatement;
 
     const fakeTasksTableData = PTasksTableData(
       id: 1,
@@ -31,7 +32,9 @@ void main() {
 
     // Made to match the data in [fakeTasksTableData].
     final fakeTasksTableCompanion = PTasksTableCompanion(
+      id: Value(fakeTasksTableData.id),
       instruction: Value(fakeTasksTableData.instruction),
+      isCompleted: Value(fakeTasksTableData.isCompleted),
     );
 
     setUpAll(() {
@@ -41,18 +44,19 @@ void main() {
 
     setUp(() {
       mockPDatabase = MockPDatabase();
-      mockSimpleSelectStatement = MockSimpleSelectStatement();
-      mockInsertStatement = MockInsertStatement();
       client = PDatabaseClient(database: mockPDatabase);
 
       when(() => mockPDatabase.pTasksTable).thenReturn(Fake$PTasksTableTable());
-      when(() => mockPDatabase.select(any<$PTasksTableTable>()))
-          .thenReturn(mockSimpleSelectStatement);
-      when(() => mockPDatabase.into(any<$PTasksTableTable>()))
-          .thenReturn(mockInsertStatement);
     });
 
     group('tasksStream', () {
+      late MockSimpleSelectStatement mockSimpleSelectStatement;
+
+      setUp(() {
+        mockSimpleSelectStatement = MockSimpleSelectStatement();
+        when(() => mockPDatabase.select(any<$PTasksTableTable>()))
+            .thenReturn(mockSimpleSelectStatement);
+      });
       test(
         requirement(
           When: 'steaming tasks table data from the database succeeds',
@@ -86,6 +90,14 @@ void main() {
       );
     });
     group('insertTask', () {
+      late MockInsertStatement mockInsertStatement;
+
+      setUp(() {
+        mockInsertStatement = MockInsertStatement();
+        when(() => mockPDatabase.into(any<$PTasksTableTable>()))
+            .thenReturn(mockInsertStatement);
+      });
+
       test(
         requirement(
           When: 'inserting a task into the database succeeds',
@@ -113,6 +125,45 @@ void main() {
           final result = await client.insertTask(fakeTasksTableCompanion);
 
           expect(result, left(PTableInsertException.unknown));
+        }),
+      );
+    });
+
+    group('updateTask', () {
+      late MockUpdateStatement mockUpdateStatement;
+
+      setUp(() {
+        mockUpdateStatement = MockUpdateStatement();
+        when(() => mockPDatabase.update(any<$PTasksTableTable>()))
+            .thenReturn(mockUpdateStatement);
+      });
+      test(
+        requirement(
+          When: 'updating a task in the database succeeds',
+          Then: 'returns [unit]',
+        ),
+        procedure(() async {
+          when(() => mockUpdateStatement.replace(any()))
+              .thenAnswer((_) async => true);
+
+          final result = await client.updateTask(fakeTasksTableCompanion);
+
+          expect(result, right(unit));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'updating a task in the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockUpdateStatement.replace(any()))
+              .thenThrow(Exception('Unknown exception'));
+
+          final result = await client.updateTask(fakeTasksTableCompanion);
+
+          expect(result, left(PTableUpdateException.unknown));
         }),
       );
     });
