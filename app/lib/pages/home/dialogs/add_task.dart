@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pcore/pcore.dart';
 import 'package:purrfect/localization/l10n.dart';
+import 'package:purrfect/pages/home/bloc/_bloc.dart';
 
 /// {@template PAddTaskDialog}
 ///
@@ -13,19 +14,20 @@ import 'package:purrfect/localization/l10n.dart';
 class PAddTaskDialog extends StatelessWidget {
   /// {@macro PAddTaskDialog}
   PAddTaskDialog({
-    //required this.bloc,
+    required this.bloc,
     super.key,
   });
 
   /// The bloc that handles creation the task.
   /// Used to dispatch the task creation event.
-  //final PTaskCreationBloc bloc;
+  final PTaskCreationBloc bloc;
 
   final _formKey = GlobalKey<FormFieldState<String>>();
   final _input = PTextInput();
 
   void _onSubmitted(BuildContext context) {
     if (_formKey.currentState!.validate()) {
+      bloc.add(PTaskCreationTriggered(instruction: _input.value(context)));
       Navigator.pop(context);
     }
   }
@@ -56,10 +58,12 @@ class PAddTaskDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
+          key: const Key('addTaskDialog_cancel_button'),
           onPressed: () => Navigator.pop(context),
           child: Text(context.pAppL10n.cancel),
         ),
         TextButton(
+          key: const Key('addTaskDialog_ok_button'),
           onPressed: () => _onSubmitted(context),
           child: Text(context.pAppL10n.ok),
         ),
