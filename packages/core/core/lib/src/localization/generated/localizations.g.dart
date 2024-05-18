@@ -94,6 +94,12 @@ abstract class PCoreL10n {
     Locale('de'),
     Locale('en')
   ];
+
+  /// No description provided for @inputError_text_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter some text.'**
+  String get inputError_text_empty;
 }
 
 class _PCoreL10nDelegate extends LocalizationsDelegate<PCoreL10n> {

@@ -1,0 +1,12 @@
+name: ptasks_repository
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  pcore:
+  pdatabase_client:
+  ppub:
+
+dev_dependencies:
+  ppub_dev:

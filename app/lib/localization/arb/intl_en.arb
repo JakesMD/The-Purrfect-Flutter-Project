@@ -1,3 +1,15 @@
 {
-    "@@locale": "en"
+    "@@locale": "en",
+    "stagingBanner_message": "You're using the staging version.",
+    "stagingBanner_button": "Release version",
+    "snackBar_error_defaultMessage": "Oops! Something went wrong. Please check your internet connection and try again.",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "homePage_addTaskDialog_title": "Add a task",
+    "homePage_addTaskDialog_hint_instruction": "Instruction",
+    "homePage_editTaskDialog_title": "Edit task",
+    "homePage_editTaskDialog_hint_instruction": "Instruction"
 }
