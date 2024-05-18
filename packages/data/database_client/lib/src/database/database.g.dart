@@ -23,10 +23,11 @@ class $PTasksTableTable extends PTasksTable
   @override
   late final GeneratedColumn<String> instruction = GeneratedColumn<String>(
       'instruction', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 200),
+      additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1, maxTextLength: 1000),
       type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      requiredDuringInsert: false,
+      defaultValue: const Constant('Instruction goes here'));
   static const VerificationMeta _isCompletedMeta =
       const VerificationMeta('isCompleted');
   @override
@@ -57,8 +58,6 @@ class $PTasksTableTable extends PTasksTable
           _instructionMeta,
           instruction.isAcceptableOrUnknown(
               data['instruction']!, _instructionMeta));
-    } else if (isInserting) {
-      context.missing(_instructionMeta);
     }
     if (data.containsKey('is_completed')) {
       context.handle(
@@ -175,9 +174,9 @@ class PTasksTableCompanion extends UpdateCompanion<PTasksTableData> {
   });
   PTasksTableCompanion.insert({
     this.id = const Value.absent(),
-    required String instruction,
+    this.instruction = const Value.absent(),
     this.isCompleted = const Value.absent(),
-  }) : instruction = Value(instruction);
+  });
   static Insertable<PTasksTableData> custom({
     Expression<int>? id,
     Expression<String>? instruction,
@@ -239,7 +238,7 @@ abstract class _$PDatabase extends GeneratedDatabase {
 typedef $$PTasksTableTableInsertCompanionBuilder = PTasksTableCompanion
     Function({
   Value<int> id,
-  required String instruction,
+  Value<String> instruction,
   Value<bool> isCompleted,
 });
 typedef $$PTasksTableTableUpdateCompanionBuilder = PTasksTableCompanion
@@ -280,7 +279,7 @@ class $$PTasksTableTableTableManager extends RootTableManager<
           ),
           getInsertCompanionBuilder: ({
             Value<int> id = const Value.absent(),
-            required String instruction,
+            Value<String> instruction = const Value.absent(),
             Value<bool> isCompleted = const Value.absent(),
           }) =>
               PTasksTableCompanion.insert(

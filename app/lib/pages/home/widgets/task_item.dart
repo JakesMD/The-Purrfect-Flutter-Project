@@ -38,7 +38,11 @@ class PTaskItem extends StatelessWidget {
     return true;
   }
 
-  void _onCheckboxChanged(BuildContext context, bool? value) {}
+  void _onCheckboxChanged(BuildContext context, bool value) {
+    context.read<PTaskStatusUpdateBloc>().add(
+          PTaskStatusUpdateTriggered(taskID: task.id, isCompleted: value),
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,7 @@ class PTaskItem extends StatelessWidget {
         title: Text(task.instruction),
         trailing: Checkbox(
           value: task.isCompleted,
-          onChanged: (value) => _onCheckboxChanged(context, value),
+          onChanged: (value) => _onCheckboxChanged(context, value!),
         ),
         onTap: () => onPressed(task),
       ),

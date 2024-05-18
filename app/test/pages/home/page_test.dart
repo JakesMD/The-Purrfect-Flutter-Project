@@ -32,12 +32,17 @@ class MockPTaskDeletionBloc
     extends MockBloc<PTaskDeletionEvent, PTaskDeletionState>
     implements PTaskDeletionBloc {}
 
+class MockPTaskStatusUpdateBloc
+    extends MockBloc<PTaskStatusUpdateEvent, PTaskStatusUpdateState>
+    implements PTaskStatusUpdateBloc {}
+
 void main() {
   group('PHomePage tests', () {
     late MockPTasksStreamBloc mockTasksStreamBloc;
     late MockPTaskCreationBloc mockTaskCreationBloc;
     late MockPTaskEditBloc mockTaskEditBloc;
     late MockPTaskDeletionBloc mockTaskDeletionBloc;
+    late MockPTaskStatusUpdateBloc mockTaskStatusUpdateBloc;
 
     const fakeTask = PTask(id: 4, instruction: 'asdsa', isCompleted: false);
 
@@ -56,6 +61,9 @@ void main() {
           BlocProvider<PTaskDeletionBloc>(
             create: (context) => mockTaskDeletionBloc,
           ),
+          BlocProvider<PTaskStatusUpdateBloc>(
+            create: (context) => mockTaskStatusUpdateBloc,
+          ),
         ],
         child: const PHomePage(),
       );
@@ -66,11 +74,15 @@ void main() {
       mockTaskCreationBloc = MockPTaskCreationBloc();
       mockTaskEditBloc = MockPTaskEditBloc();
       mockTaskDeletionBloc = MockPTaskDeletionBloc();
+      mockTaskStatusUpdateBloc = MockPTaskStatusUpdateBloc();
 
       when(() => mockTasksStreamBloc.state).thenReturn(PTasksStreamInitial());
       when(() => mockTaskCreationBloc.state).thenReturn(PTaskCreationInitial());
       when(() => mockTaskEditBloc.state).thenReturn(PTaskEditInitial());
       when(() => mockTaskDeletionBloc.state).thenReturn(PTaskDeletionInitial());
+      when(() => mockTaskStatusUpdateBloc.state).thenReturn(
+        PTaskStatusUpdateInitial(),
+      );
     });
 
     testWidgets(
@@ -162,6 +174,28 @@ void main() {
         );
       }),
     );
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'Task status update is in progress',
+        Then: 'Shows loading indicator',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTaskStatusUpdateBloc,
+          Stream.fromIterable([PTaskStatusUpdateInProgress()]),
+          initialState: PTaskStatusUpdateInitial(),
+        );
+
+        await tester.pumpWidget(buildHomePage());
+        await tester.pump();
+
+        expect(
+          find.byKey(const Key('app_bar_loading_indicator')),
+          findsOneWidget,
+        );
+      }),
+    );
 
     testWidgets(
       requirement(
@@ -242,6 +276,30 @@ void main() {
             PTaskDeletionFailure(exception: PTaskDeletionException.unknown),
           ]),
           initialState: PTaskDeletionInitial(),
+        );
+
+        await tester.pumpWidget(buildHomePage());
+        await tester.pump();
+
+        expect(find.byType(SnackBar), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Home page',
+        When: 'When task status update fails',
+        Then: 'Snackbar is shown',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTaskStatusUpdateBloc,
+          Stream.fromIterable([
+            PTaskStatusUpdateFailure(
+              exception: PTaskUpdateException.unknown,
+            ),
+          ]),
+          initialState: PTaskStatusUpdateInitial(),
         );
 
         await tester.pumpWidget(buildHomePage());

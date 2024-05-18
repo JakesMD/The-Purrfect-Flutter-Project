@@ -49,7 +49,9 @@ class PDatabaseClient {
     PTasksTableCompanion task,
   ) async {
     try {
-      await database.update(database.pTasksTable).replace(task);
+      await (database.update(database.pTasksTable)
+            ..where((t) => t.id.equals(task.id.value)))
+          .write(task);
       return right(unit);
     } catch (e, s) {
       log(e.toString(), error: e, stackTrace: s, name: 'PDatabaseClient');
@@ -62,7 +64,9 @@ class PDatabaseClient {
     PTasksTableCompanion task,
   ) async {
     try {
-      await database.delete(database.pTasksTable).delete(task);
+      await (database.delete(database.pTasksTable)
+            ..where((t) => t.id.equals(task.id.value)))
+          .go();
       return right(unit);
     } catch (e, s) {
       log(e.toString(), error: e, stackTrace: s, name: 'PDatabaseClient');

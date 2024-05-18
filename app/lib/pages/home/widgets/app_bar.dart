@@ -38,6 +38,9 @@ class PHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           PLoadingListener<PTaskDeletionBloc, PTaskDeletionState>(
             isLoading: (state) => state is PTaskDeletionInProgress,
           ),
+          PLoadingListener<PTaskStatusUpdateBloc, PTaskStatusUpdateState>(
+            isLoading: (state) => state is PTaskStatusUpdateInProgress,
+          ),
         ],
       ),
     );

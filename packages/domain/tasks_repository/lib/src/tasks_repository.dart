@@ -35,7 +35,7 @@ class PTasksRepository {
     required String instruction,
   }) async {
     final result = await databaseClient.insertTask(
-      PTasksTableCompanion.insert(instruction: instruction),
+      PTasksTableCompanion(instruction: Value(instruction)),
     );
 
     return result.fold(
@@ -57,6 +57,28 @@ class PTasksRepository {
       PTasksTableCompanion(
         id: Value(taskID),
         instruction: Value(instruction),
+      ),
+    );
+
+    return result.fold(
+      (exception) => left(
+        switch (exception) {
+          PTableUpdateException.unknown => PTaskUpdateException.unknown,
+        },
+      ),
+      right,
+    );
+  }
+
+  /// Sets the completion status of the task with the given [taskID].
+  Future<Either<PTaskUpdateException, Unit>> updateTaskStatus({
+    required int taskID,
+    required bool isCompleted,
+  }) async {
+    final result = await databaseClient.updateTask(
+      PTasksTableCompanion(
+        id: Value(taskID),
+        isCompleted: Value(isCompleted),
       ),
     );
 

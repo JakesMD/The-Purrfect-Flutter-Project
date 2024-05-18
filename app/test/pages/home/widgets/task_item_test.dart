@@ -14,9 +14,14 @@ class MockPTaskDeletionBloc
     extends MockBloc<PTaskDeletionEvent, PTaskDeletionState>
     implements PTaskDeletionBloc {}
 
+class MockPTaskStatusUpdateBloc
+    extends MockBloc<PTaskStatusUpdateEvent, PTaskStatusUpdateState>
+    implements PTaskStatusUpdateBloc {}
+
 void main() {
   group('PTaskItem tests', () {
     late MockPTaskDeletionBloc mockTaskDeletionBloc;
+    late MockPTaskStatusUpdateBloc mockTaskStatusUpdateBloc;
 
     const fakeTask = PTask(id: 1, instruction: 'hi', isCompleted: false);
 
@@ -25,6 +30,9 @@ void main() {
         blocProviders: [
           BlocProvider<PTaskDeletionBloc>(
             create: (context) => mockTaskDeletionBloc,
+          ),
+          BlocProvider<PTaskStatusUpdateBloc>(
+            create: (context) => mockTaskStatusUpdateBloc,
           ),
         ],
         child: Scaffold(
@@ -35,11 +43,18 @@ void main() {
 
     setUpAll(() {
       registerFallbackValue(PTaskDeletionTriggered(taskID: fakeTask.id));
+      registerFallbackValue(
+        PTaskStatusUpdateTriggered(taskID: fakeTask.id, isCompleted: true),
+      );
     });
 
     setUp(() {
       mockTaskDeletionBloc = MockPTaskDeletionBloc();
+      mockTaskStatusUpdateBloc = MockPTaskStatusUpdateBloc();
       when(() => mockTaskDeletionBloc.state).thenReturn(PTaskDeletionInitial());
+      when(() => mockTaskStatusUpdateBloc.state).thenReturn(
+        PTaskStatusUpdateInitial(),
+      );
     });
 
     testWidgets(
@@ -82,6 +97,26 @@ void main() {
 
         verify(() => mockTaskDeletionBloc.add(any())).called(1);
         expect(find.byType(ListTile), findsOneWidget);
+      }),
+    );
+
+    testWidgets(
+      requirement(
+        Given: 'Task item',
+        When: 'Checkbox pressed',
+        Then: 'Task status update event is dispatched',
+      ),
+      widgetsProcedure((tester) async {
+        whenListen(
+          mockTaskStatusUpdateBloc,
+          Stream.fromIterable([PTaskStatusUpdateSuccess(isCompleted: true)]),
+        );
+
+        await tester.pumpWidget(buildItem());
+        await tester.tap(find.byType(Checkbox));
+        await tester.pump();
+
+        verify(() => mockTaskStatusUpdateBloc.add(any())).called(1);
       }),
     );
   });
