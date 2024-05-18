@@ -1,1 +1,2 @@
 /app/build/** linguist-vendored
+/app/build/** linguist-documentation=false
