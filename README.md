@@ -8,6 +8,8 @@
 
 Welcome to the Purrfect Flutter Project! 🚀
 
+[➞ To the web app!](https://jakesmd.github.io/The-Purrfect-Flutter-Project/)
+
 This community-driven initiative aims to create the "purrfect" example of a real-life Flutter app, ready to scale and handle millions of users.
 
 Whether you're a Flutter newbie or a seasoned pro, there's a place for you here. Together, we'll build a robust and scalable application that sets the standard for Flutter projects worldwide.
