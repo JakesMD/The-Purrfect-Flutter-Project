@@ -146,8 +146,8 @@ void main() {
           Then: 'returns [unit]',
         ),
         procedure(() async {
-          when(() => mockUpdateStatement.replace(any()))
-              .thenAnswer((_) async => true);
+          when(() => mockUpdateStatement.write(any()))
+              .thenAnswer((_) async => 1);
 
           final result = await client.updateTask(fakeTasksTableCompanion);
 
@@ -161,7 +161,7 @@ void main() {
           Then: 'returns [unknown] exception',
         ),
         procedure(() async {
-          when(() => mockUpdateStatement.replace(any()))
+          when(() => mockUpdateStatement.write(any()))
               .thenThrow(Exception('Unknown exception'));
 
           final result = await client.updateTask(fakeTasksTableCompanion);
@@ -185,8 +185,7 @@ void main() {
           Then: 'returns [unit]',
         ),
         procedure(() async {
-          when(() => mockDeleteStatement.delete(any()))
-              .thenAnswer((_) async => 1);
+          when(() => mockDeleteStatement.go()).thenAnswer((_) async => 1);
 
           final result = await client.deleteTask(fakeTasksTableCompanion);
 
@@ -200,7 +199,7 @@ void main() {
           Then: 'returns [unknown] exception',
         ),
         procedure(() async {
-          when(() => mockDeleteStatement.delete(any()))
+          when(() => mockDeleteStatement.go())
               .thenThrow(Exception('Unknown exception'));
 
           final result = await client.deleteTask(fakeTasksTableCompanion);

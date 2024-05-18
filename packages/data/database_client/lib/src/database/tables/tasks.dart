@@ -8,7 +8,9 @@ class PTasksTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   /// The instruction of the task.
-  TextColumn get instruction => text().withLength(min: 1, max: 200)();
+  TextColumn get instruction => text()
+      .withDefault(const Constant('Instruction goes here'))
+      .withLength(min: 1, max: 1000)();
 
   /// The flag indicating whether the task is completed.
   BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();

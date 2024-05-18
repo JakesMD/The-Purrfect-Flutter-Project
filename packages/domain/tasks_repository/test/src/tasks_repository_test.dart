@@ -144,6 +144,45 @@ void main() {
       );
     });
 
+    group('updateTaskStatus', () {
+      test(
+        requirement(
+          When: 'updating a task in the database succeeds',
+          Then: 'returns [unit]',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.updateTask(any()))
+              .thenAnswer((_) => Future.value(right(unit)));
+
+          final result = await repo.updateTaskStatus(
+            taskID: fakeTask.id,
+            isCompleted: fakeTask.isCompleted,
+          );
+
+          expect(result, right(unit));
+        }),
+      );
+
+      test(
+        requirement(
+          When: 'updating a task in the database fails',
+          Then: 'returns [unknown] exception',
+        ),
+        procedure(() async {
+          when(() => mockDatabaseClient.updateTask(any())).thenAnswer(
+            (_) => Future.value(left(PTableUpdateException.unknown)),
+          );
+
+          final result = await repo.updateTaskStatus(
+            taskID: fakeTask.id,
+            isCompleted: fakeTask.isCompleted,
+          );
+
+          expect(result, left(PTaskUpdateException.unknown));
+        }),
+      );
+    });
+
     group('deleteTask', () {
       test(
         requirement(
